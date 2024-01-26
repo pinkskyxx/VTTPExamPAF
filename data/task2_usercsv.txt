@@ -1,0 +1,6 @@
+INSERT INTO users (email, name)
+VALUES
+  ('fred@gmail.com', 'Fred Flintstone'),
+  ('barney@gmail.com', 'Barney Rubble'),
+  ('fry@planetexpress.com', 'Philip J Fry'),
+  ('hlmer@gmail.com', 'Homer Simpson');

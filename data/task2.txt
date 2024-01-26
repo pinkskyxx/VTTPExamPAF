@@ -1,0 +1,77 @@
+mongoimport -h localhost --port=27017 -d bedandbreakfast -c listings_and_reviews --type=json listings.json
+
+
+task 2.2
+---------
+
+db.listings_and_reviews.aggregate([
+    {
+        $match: {
+            "address.country": { $regex: /^australia$/i }
+        }
+    },
+    {
+        $out: "listings"
+    }
+]);
+
+
+db.listings.find();
+
+----------
+task 2.3
+
+----------
+
+db.listings.aggregate([
+    {
+        $unwind: "$reviews" 
+    },
+    {
+        $project: {
+            _id: "$reviews._id",
+            date: "$reviews.date",
+            listing_id: "$_id",
+            reviewer_name: { $replaceAll: { input: "$reviews.reviewer_name", find: ",", replacement: "" } },
+            comments: {
+                $replaceAll: {
+                    input: {
+                        $replaceAll: {
+                            input: "$reviews.comments",
+                            find: "\n",
+                            replacement: ""
+                        }
+                    },
+                    find: "\r",
+                    replacement: ""
+                }
+            }
+        }
+    },
+    {
+        $out: "reviews"
+    }
+]);
+
+db.reviews.find();
+
+
+----------
+task 2.4
+---------
+
+db.listings.updateMany({}, { $unset: { reviews: 1 } });
+
+
+-------
+task 2.5
+---------
+
+mongoexport --host localhost --port 27017 --db bedandbreakfast --collection reviews --type=csv --fields date,listing_id,reviewer_name,comments --out reviews.csv
+
+------
+end
+
+
+
+
